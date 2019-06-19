@@ -1,3 +1,3 @@
 # Sort dictionary as descending order of values
 
-sorted_dict = (dict.items(), key = lambda kv:kv[1], reverse = True)
+sorted_dict = sorted(dict.items(), key = lambda kv:kv[1], reverse = True)
