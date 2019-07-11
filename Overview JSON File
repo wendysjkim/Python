@@ -1,0 +1,56 @@
+import json
+f = open('file_name.json')
+data = json.load(f)
+
+# functions that create outline of the schema structure.
+def get_header(depth, bullet):
+    headers = [['I', 'II', 'III', 'IV', 'V'],
+               ['A', 'B', 'C', 'D', 'E'],
+               [1,2,3,4,5],
+               ['a', 'b', 'c', 'd', 'e'],
+               ['i', 'ii', 'iii', 'iv', 'v']]
+    depth = depth % 5
+    return headers[depth][bullet]
+
+def get_length(json_obj):
+    if type(json_obj) == dict:
+        return '({} items)'.format(len(json_obj.keys()))
+    elif type(json_obj) == list:
+        return '({} items)'.format(len(json_obj))
+    else:
+        return ''
+    
+def obj_overview(json_obj, outline, depth, bullet, name=None):
+    header = get_header(depth, bullet)
+    nobs = get_length(json_obj)
+    space = ' '*depth*4
+    if outline == '':
+        outline += '{}. root - {} {}'.format(header,type(json_obj),nobs)
+        return outline
+    else:
+        outline += '\n{}{}. {} {} {}'.format(space,header,name, type(json_obj),nobs)
+        return outline
+
+def print_obj_outline(json_obj, outline='', depth=0, bullet=0,name=""):
+    outline = obj_overview(json_obj, outline=outline, depth=depth, bullet=bullet, name=name)
+    if type(json_obj) == list:
+        n_items = 5
+        if len(json_obj) < n_items:
+            n_items = len(json_obj)
+        for n, item in enumerate(json_obj[:n_items]):
+            outline=print_obj_outline(item, outline=outline, depth=depth+1, bullet=n)
+    elif type(json_obj) == dict:
+        n_items = 5
+        if len(json_obj.keys()) < n_items:
+            n_items = len(json_obj.keys())
+        firstn = list(json_obj.keys())[:n_items]
+        for n, key in enumerate(firstn):
+            if depth < 10:
+                outline=print_obj_outline(json_obj[key], outline=outline, depth=depth+1, bullet=n, name=key+' ')
+    else:
+        pass
+    return outline
+    
+    
+outline=print_obj_outline(data)
+print(outline)
